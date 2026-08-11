@@ -1,0 +1,1508 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="个人作品集网站">
+  <title>林默｜前端工程师</title>
+
+  <style>
+    /* ==================== 基础变量与样式重置 ==================== */
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --primary-light: #eff6ff;
+      --accent: #14b8a6;
+      --text-main: #172033;
+      --text-secondary: #64748b;
+      --background: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+      --radius: 18px;
+      --nav-height: 72px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: calc(var(--nav-height) + 20px);
+    }
+
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+      color: var(--text-main);
+      background: var(--background);
+      font-family:
+        "Microsoft YaHei",
+        "PingFang SC",
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+      line-height: 1.7;
+    }
+
+    body.menu-open {
+      overflow: hidden;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      border: none;
+      color: inherit;
+      background: none;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    ul {
+      list-style: none;
+    }
+
+    .container {
+      width: min(1120px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    .section {
+      padding: 100px 0;
+    }
+
+    .section-heading {
+      max-width: 680px;
+      margin-bottom: 48px;
+    }
+
+    .section-label {
+      display: inline-block;
+      margin-bottom: 10px;
+      color: var(--primary);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .section-title {
+      margin-bottom: 14px;
+      font-size: clamp(30px, 4vw, 44px);
+      line-height: 1.2;
+      letter-spacing: -0.04em;
+    }
+
+    .section-description {
+      color: var(--text-secondary);
+      font-size: 17px;
+    }
+
+    /* ==================== 顶部导航栏 ==================== */
+    .navbar {
+      position: fixed;
+      z-index: 1000;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: var(--nav-height);
+      border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(16px);
+    }
+
+    .nav-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 100%;
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .logo-mark {
+      display: grid;
+      width: 38px;
+      height: 38px;
+      place-items: center;
+      border-radius: 12px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.22);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-links a {
+      position: relative;
+      padding: 10px 14px;
+      color: var(--text-secondary);
+      font-size: 15px;
+      font-weight: 600;
+      transition: color 0.25s ease;
+    }
+
+    .nav-links a::after {
+      position: absolute;
+      right: 14px;
+      bottom: 5px;
+      left: 14px;
+      height: 2px;
+      border-radius: 2px;
+      background: var(--primary);
+      content: "";
+      transform: scaleX(0);
+      transition: transform 0.25s ease;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--primary);
+    }
+
+    .nav-links a:hover::after,
+    .nav-links a.active::after {
+      transform: scaleX(1);
+    }
+
+    .menu-button {
+      display: none;
+      width: 42px;
+      height: 42px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      background: var(--primary-light);
+    }
+
+    .menu-icon,
+    .menu-icon::before,
+    .menu-icon::after {
+      display: block;
+      width: 20px;
+      height: 2px;
+      border-radius: 2px;
+      background: var(--text-main);
+      transition: 0.25s ease;
+    }
+
+    .menu-icon {
+      position: relative;
+    }
+
+    .menu-icon::before,
+    .menu-icon::after {
+      position: absolute;
+      left: 0;
+      content: "";
+    }
+
+    .menu-icon::before {
+      top: -6px;
+    }
+
+    .menu-icon::after {
+      top: 6px;
+    }
+
+    .menu-button.open .menu-icon {
+      background: transparent;
+    }
+
+    .menu-button.open .menu-icon::before {
+      top: 0;
+      transform: rotate(45deg);
+    }
+
+    .menu-button.open .menu-icon::after {
+      top: 0;
+      transform: rotate(-45deg);
+    }
+
+    /* ==================== 首页横幅 ==================== */
+    .hero {
+      position: relative;
+      display: flex;
+      min-height: 100vh;
+      align-items: center;
+      padding: calc(var(--nav-height) + 70px) 0 80px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 10% 25%, rgba(37, 99, 235, 0.12), transparent 30%),
+        radial-gradient(circle at 90% 80%, rgba(20, 184, 166, 0.12), transparent 28%),
+        var(--surface);
+    }
+
+    .hero::before {
+      position: absolute;
+      top: 18%;
+      right: 8%;
+      width: 320px;
+      height: 320px;
+      border: 1px solid rgba(37, 99, 235, 0.1);
+      border-radius: 50%;
+      content: "";
+    }
+
+    .hero-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      align-items: center;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 80px;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 22px;
+      padding: 7px 13px;
+      border: 1px solid #bfdbfe;
+      border-radius: 999px;
+      color: var(--primary-dark);
+      background: var(--primary-light);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 0 5px rgba(34, 197, 94, 0.13);
+    }
+
+    .hero-title {
+      max-width: 720px;
+      margin-bottom: 22px;
+      font-size: clamp(45px, 7vw, 76px);
+      line-height: 1.08;
+      letter-spacing: -0.055em;
+    }
+
+    .hero-title span {
+      color: transparent;
+      background: linear-gradient(120deg, var(--primary), var(--accent));
+      background-clip: text;
+      -webkit-background-clip: text;
+    }
+
+    .hero-description {
+      max-width: 640px;
+      margin-bottom: 34px;
+      color: var(--text-secondary);
+      font-size: clamp(17px, 2vw, 20px);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .button {
+      display: inline-flex;
+      min-height: 50px;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 22px;
+      border: 1px solid transparent;
+      border-radius: 13px;
+      font-size: 15px;
+      font-weight: 700;
+      transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        background 0.25s ease;
+    }
+
+    .button:hover {
+      transform: translateY(-3px);
+    }
+
+    .button-primary {
+      color: #fff;
+      background: var(--primary);
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.22);
+    }
+
+    .button-primary:hover {
+      background: var(--primary-dark);
+      box-shadow: 0 16px 30px rgba(37, 99, 235, 0.28);
+    }
+
+    .button-secondary {
+      border-color: var(--border);
+      background: var(--surface);
+    }
+
+    .button-secondary:hover {
+      border-color: #bfdbfe;
+      background: var(--primary-light);
+    }
+
+    .avatar-wrapper {
+      position: relative;
+      display: grid;
+      justify-self: center;
+      place-items: center;
+    }
+
+    .avatar-decoration {
+      position: absolute;
+      width: 360px;
+      height: 360px;
+      border: 2px dashed rgba(37, 99, 235, 0.18);
+      border-radius: 50%;
+      animation: rotate 24s linear infinite;
+    }
+
+    .avatar {
+      position: relative;
+      display: grid;
+      width: 280px;
+      height: 280px;
+      place-items: center;
+      overflow: hidden;
+      border: 10px solid rgba(255, 255, 255, 0.8);
+      border-radius: 38% 62% 56% 44% / 46% 40% 60% 54%;
+      color: #fff;
+      background: linear-gradient(145deg, var(--primary), var(--accent));
+      box-shadow: 0 28px 60px rgba(37, 99, 235, 0.24);
+      animation: morph 8s ease-in-out infinite;
+    }
+
+    .avatar-placeholder {
+      text-align: center;
+    }
+
+    .avatar-placeholder strong {
+      display: block;
+      font-size: 76px;
+      line-height: 1;
+    }
+
+    .avatar-placeholder span {
+      display: block;
+      margin-top: 12px;
+      font-size: 14px;
+      letter-spacing: 0.12em;
+      opacity: 0.86;
+    }
+
+    .floating-card {
+      position: absolute;
+      right: -28px;
+      bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      min-width: 170px;
+      padding: 14px 16px;
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+
+    .floating-icon {
+      display: grid;
+      width: 40px;
+      height: 40px;
+      flex: 0 0 auto;
+      place-items: center;
+      border-radius: 12px;
+      color: var(--primary);
+      background: var(--primary-light);
+      font-weight: 800;
+    }
+
+    .floating-card strong,
+    .floating-card small {
+      display: block;
+    }
+
+    .floating-card strong {
+      font-size: 14px;
+    }
+
+    .floating-card small {
+      color: var(--text-secondary);
+      font-size: 12px;
+    }
+
+    @keyframes rotate {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes morph {
+      0%,
+      100% {
+        border-radius: 38% 62% 56% 44% / 46% 40% 60% 54%;
+      }
+
+      50% {
+        border-radius: 58% 42% 39% 61% / 41% 59% 41% 59%;
+      }
+    }
+
+    /* ==================== 关于我 ==================== */
+    .about-grid {
+      display: grid;
+      align-items: start;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 70px;
+    }
+
+    .about-card {
+      position: relative;
+      min-height: 380px;
+      overflow: hidden;
+      border-radius: 28px;
+      background: linear-gradient(145deg, #dbeafe, #ccfbf1);
+      box-shadow: var(--shadow);
+    }
+
+    .about-card::before,
+    .about-card::after {
+      position: absolute;
+      border-radius: 50%;
+      content: "";
+    }
+
+    .about-card::before {
+      top: -70px;
+      right: -60px;
+      width: 230px;
+      height: 230px;
+      background: rgba(37, 99, 235, 0.13);
+    }
+
+    .about-card::after {
+      bottom: -100px;
+      left: -70px;
+      width: 260px;
+      height: 260px;
+      background: rgba(20, 184, 166, 0.15);
+    }
+
+    .about-code {
+      position: absolute;
+      z-index: 1;
+      top: 50%;
+      left: 50%;
+      width: calc(100% - 56px);
+      padding: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.65);
+      border-radius: 20px;
+      color: #dbeafe;
+      background: #172033;
+      box-shadow: 0 20px 45px rgba(15, 23, 42, 0.2);
+      font-family: Consolas, Monaco, monospace;
+      font-size: 14px;
+      line-height: 1.9;
+      transform: translate(-50%, -50%);
+    }
+
+    .code-blue {
+      color: #7dd3fc;
+    }
+
+    .code-green {
+      color: #86efac;
+    }
+
+    .code-yellow {
+      color: #fde68a;
+    }
+
+    .about-content p {
+      margin-bottom: 18px;
+      color: var(--text-secondary);
+      font-size: 17px;
+    }
+
+    .about-stats {
+      display: grid;
+      margin-top: 34px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .stat-item {
+      padding: 20px 16px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--surface);
+      text-align: center;
+      transition:
+        transform 0.25s ease,
+        border-color 0.25s ease;
+    }
+
+    .stat-item:hover {
+      border-color: #bfdbfe;
+      transform: translateY(-4px);
+    }
+
+    .stat-item strong {
+      display: block;
+      color: var(--primary);
+      font-size: 27px;
+      line-height: 1.2;
+    }
+
+    .stat-item span {
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+
+    /* ==================== 技能板块 ==================== */
+    .skills-section {
+      background: var(--surface);
+    }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .skill-group {
+      padding: 28px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--background);
+      transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease,
+        border-color 0.3s ease;
+    }
+
+    .skill-group:hover {
+      border-color: #bfdbfe;
+      box-shadow: var(--shadow);
+      transform: translateY(-6px);
+    }
+
+    .skill-icon {
+      display: grid;
+      width: 48px;
+      height: 48px;
+      margin-bottom: 18px;
+      place-items: center;
+      border-radius: 14px;
+      color: var(--primary);
+      background: var(--primary-light);
+      font-size: 21px;
+      font-weight: 800;
+    }
+
+    .skill-group h3 {
+      margin-bottom: 16px;
+      font-size: 20px;
+    }
+
+    .skill-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+    }
+
+    .skill-tag {
+      padding: 7px 11px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--text-secondary);
+      background: var(--surface);
+      font-size: 13px;
+      font-weight: 600;
+      transition:
+        color 0.2s ease,
+        border-color 0.2s ease,
+        background 0.2s ease;
+    }
+
+    .skill-tag:hover {
+      border-color: #bfdbfe;
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    /* ==================== 项目作品 ==================== */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .project-card {
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+      transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+    }
+
+    .project-card:hover {
+      box-shadow: var(--shadow);
+      transform: translateY(-8px);
+    }
+
+    .project-cover {
+      position: relative;
+      display: flex;
+      height: 210px;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .project-cover::after {
+      position: absolute;
+      width: 130px;
+      height: 130px;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 30px;
+      content: "";
+      transform: rotate(18deg);
+      transition: transform 0.35s ease;
+    }
+
+    .project-card:hover .project-cover::after {
+      transform: rotate(32deg) scale(1.08);
+    }
+
+    .cover-one {
+      background: linear-gradient(145deg, #2563eb, #60a5fa);
+    }
+
+    .cover-two {
+      background: linear-gradient(145deg, #0f766e, #2dd4bf);
+    }
+
+    .cover-three {
+      background: linear-gradient(145deg, #7c3aed, #c084fc);
+    }
+
+    .project-symbol {
+      position: relative;
+      z-index: 1;
+      color: rgba(255, 255, 255, 0.95);
+      font-size: 58px;
+      font-weight: 900;
+      letter-spacing: -0.08em;
+    }
+
+    .project-content {
+      padding: 25px;
+    }
+
+    .project-category {
+      display: inline-block;
+      margin-bottom: 10px;
+      color: var(--primary);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .project-content h3 {
+      margin-bottom: 10px;
+      font-size: 21px;
+    }
+
+    .project-content p {
+      min-height: 76px;
+      margin-bottom: 20px;
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    .project-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 17px;
+      border-top: 1px solid var(--border);
+    }
+
+    .project-tech {
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .project-link {
+      color: var(--primary);
+      font-size: 14px;
+      font-weight: 700;
+      transition:
+        color 0.2s ease,
+        transform 0.2s ease;
+    }
+
+    .project-link:hover {
+      color: var(--primary-dark);
+      transform: translateX(3px);
+    }
+
+    /* ==================== 联系方式 ==================== */
+    .contact-section {
+      padding-top: 60px;
+    }
+
+    .contact-box {
+      position: relative;
+      display: grid;
+      overflow: hidden;
+      padding: 60px;
+      border-radius: 28px;
+      color: #fff;
+      background: linear-gradient(135deg, #172033, #1e3a5f);
+      grid-template-columns: 1fr auto;
+      gap: 40px;
+    }
+
+    .contact-box::before {
+      position: absolute;
+      top: -160px;
+      right: -100px;
+      width: 380px;
+      height: 380px;
+      border-radius: 50%;
+      background: rgba(59, 130, 246, 0.2);
+      content: "";
+    }
+
+    .contact-box::after {
+      position: absolute;
+      right: 220px;
+      bottom: -150px;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: rgba(20, 184, 166, 0.12);
+      content: "";
+    }
+
+    .contact-content,
+    .contact-actions {
+      position: relative;
+      z-index: 1;
+    }
+
+    .contact-content h2 {
+      margin-bottom: 14px;
+      font-size: clamp(30px, 4vw, 45px);
+      line-height: 1.2;
+      letter-spacing: -0.04em;
+    }
+
+    .contact-content p {
+      max-width: 620px;
+      color: #cbd5e1;
+    }
+
+    .contact-actions {
+      display: flex;
+      align-items: center;
+    }
+
+    .contact-button {
+      white-space: nowrap;
+      color: var(--text-main);
+      background: #fff;
+    }
+
+    .contact-button:hover {
+      background: #eff6ff;
+    }
+
+    .contact-details {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px 28px;
+      margin-top: 26px;
+      color: #e2e8f0;
+      font-size: 14px;
+    }
+
+    /* ==================== 页脚 ==================== */
+    .footer {
+      padding: 34px 0;
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    .back-to-top {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    /* ==================== 滚动显示动画 ==================== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition:
+        opacity 0.7s ease,
+        transform 0.7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ==================== 平板响应式布局 ==================== */
+    @media (max-width: 900px) {
+      .section {
+        padding: 80px 0;
+      }
+
+      .hero-grid,
+      .about-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-grid {
+        gap: 70px;
+        text-align: center;
+      }
+
+      .hero-description {
+        margin-right: auto;
+        margin-left: auto;
+      }
+
+      .hero-actions {
+        justify-content: center;
+      }
+
+      .avatar-wrapper {
+        order: -1;
+      }
+
+      .avatar {
+        width: 230px;
+        height: 230px;
+      }
+
+      .avatar-decoration {
+        width: 300px;
+        height: 300px;
+      }
+
+      .skills-grid,
+      .projects-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .contact-box {
+        padding: 48px;
+        grid-template-columns: 1fr;
+      }
+
+      .contact-actions {
+        justify-content: flex-start;
+      }
+    }
+
+    /* ==================== 手机响应式布局 ==================== */
+    @media (max-width: 680px) {
+      :root {
+        --nav-height: 64px;
+      }
+
+      .container {
+        width: min(100% - 28px, 1120px);
+      }
+
+      .menu-button {
+        display: flex;
+      }
+
+      .nav-links {
+        position: fixed;
+        top: var(--nav-height);
+        right: 0;
+        left: 0;
+        display: flex;
+        max-height: 0;
+        overflow: hidden;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 2px;
+        padding: 0 20px;
+        border-bottom: 1px solid transparent;
+        background: rgba(255, 255, 255, 0.98);
+        opacity: 0;
+        transition:
+          max-height 0.3s ease,
+          padding 0.3s ease,
+          opacity 0.25s ease;
+      }
+
+      .nav-links.open {
+        max-height: 420px;
+        padding-top: 16px;
+        padding-bottom: 20px;
+        border-color: var(--border);
+        opacity: 1;
+      }
+
+      .nav-links a {
+        padding: 12px 14px;
+        border-radius: 10px;
+      }
+
+      .nav-links a:hover,
+      .nav-links a.active {
+        background: var(--primary-light);
+      }
+
+      .nav-links a::after {
+        display: none;
+      }
+
+      .hero {
+        min-height: auto;
+        padding-top: calc(var(--nav-height) + 55px);
+      }
+
+      .hero-grid {
+        gap: 54px;
+      }
+
+      .hero-title {
+        font-size: clamp(39px, 13vw, 58px);
+      }
+
+      .avatar {
+        width: 190px;
+        height: 190px;
+      }
+
+      .avatar-placeholder strong {
+        font-size: 58px;
+      }
+
+      .avatar-decoration {
+        width: 245px;
+        height: 245px;
+      }
+
+      .floating-card {
+        right: -30px;
+        bottom: -12px;
+        min-width: 155px;
+        padding: 11px 13px;
+      }
+
+      .about-grid {
+        gap: 38px;
+      }
+
+      .about-card {
+        min-height: 320px;
+      }
+
+      .about-code {
+        width: calc(100% - 30px);
+        padding: 20px;
+        font-size: 12px;
+      }
+
+      .about-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .skills-grid,
+      .projects-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .project-content p {
+        min-height: auto;
+      }
+
+      .contact-box {
+        padding: 36px 24px;
+      }
+
+      .contact-details {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .footer-inner {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+
+    /* 尊重用户的“减少动态效果”系统设置 */
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+      }
+
+      .reveal {
+        opacity: 1;
+        transform: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ==================== 顶部导航栏 ==================== -->
+  <header class="navbar">
+    <nav class="container nav-container" aria-label="主导航">
+      <a class="logo" href="#home" aria-label="返回首页">
+        <span class="logo-mark">林</span>
+        <span>林默</span>
+      </a>
+
+      <button
+        class="menu-button"
+        id="menuButton"
+        type="button"
+        aria-label="打开导航菜单"
+        aria-controls="navLinks"
+        aria-expanded="false"
+      >
+        <span class="menu-icon"></span>
+      </button>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a class="active" href="#home">首页</a></li>
+        <li><a href="#about">关于我</a></li>
+        <li><a href="#skills">技能</a></li>
+        <li><a href="#projects">作品集</a></li>
+        <li><a href="#contact">联系方式</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ==================== 首页横幅 ==================== -->
+    <section class="hero" id="home">
+      <div class="container hero-grid">
+        <div class="hero-content">
+          <div class="hero-tag">
+            <span class="status-dot"></span>
+            可接受新的项目合作
+          </div>
+
+          <h1 class="hero-title">
+            你好，我是林默<br>
+            一名<span>前端工程师</span>
+          </h1>
+
+          <p class="hero-description">
+            我专注于构建简洁、美观且易于使用的数字产品，
+            将创意、设计与代码融合成流畅的网页体验。
+          </p>
+
+          <div class="hero-actions">
+            <a class="button button-primary" href="#projects">查看作品集 →</a>
+            <a class="button button-secondary" href="#contact">联系我</a>
+          </div>
+        </div>
+
+        <!-- 头像占位区域：可将内部内容替换为自己的 img 标签 -->
+        <div class="avatar-wrapper" aria-label="个人头像">
+          <div class="avatar-decoration"></div>
+
+          <div class="avatar">
+            <div class="avatar-placeholder">
+              <strong>LM</strong>
+              <span>头像位置</span>
+            </div>
+          </div>
+
+          <div class="floating-card">
+            <span class="floating-icon">&lt;/&gt;</span>
+            <span>
+              <strong>专注前端开发</strong>
+              <small>设计 · 代码 · 体验</small>
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 关于我板块 ==================== -->
+    <section class="section" id="about">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="section-label">About Me</span>
+          <h2 class="section-title">关于我</h2>
+          <p class="section-description">
+            用技术解决真实问题，用细节打造令人愉悦的产品体验。
+          </p>
+        </div>
+
+        <div class="about-grid">
+          <div class="about-card reveal" aria-hidden="true">
+            <div class="about-code">
+              <div>
+                <span class="code-blue">const</span>
+                developer = {
+              </div>
+              <div>
+                &nbsp;&nbsp;name:
+                <span class="code-green">'林默'</span>,
+              </div>
+              <div>
+                &nbsp;&nbsp;role:
+                <span class="code-green">'前端工程师'</span>,
+              </div>
+              <div>
+                &nbsp;&nbsp;passion:
+                <span class="code-green">'创造优秀体验'</span>,
+              </div>
+              <div>
+                &nbsp;&nbsp;learning:
+                <span class="code-yellow">true</span>
+              </div>
+              <div>};</div>
+            </div>
+          </div>
+
+          <div class="about-content reveal">
+            <p>
+              我是一名热爱产品设计与前端技术的开发者，喜欢把复杂需求整理成清晰、
+              易用且具有视觉美感的数字产品。我注重代码质量，也关心用户实际使用时的每一个细节。
+            </p>
+
+            <p>
+              工作之外，我会持续学习新的技术与设计趋势，探索性能优化、交互设计和工程化实践。
+              我相信优秀的网站不仅应该“能够运行”，更应该自然、快速并让人愿意使用。
+            </p>
+
+            <div class="about-stats">
+              <div class="stat-item">
+                <strong>5+</strong>
+                <span>开发经验</span>
+              </div>
+              <div class="stat-item">
+                <strong>30+</strong>
+                <span>完成项目</span>
+              </div>
+              <div class="stat-item">
+                <strong>100%</strong>
+                <span>持续热爱</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 技能板块 ==================== -->
+    <section class="section skills-section" id="skills">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="section-label">My Skills</span>
+          <h2 class="section-title">专业技能</h2>
+          <p class="section-description">
+            从界面实现到工程化交付，关注产品完整生命周期。
+          </p>
+        </div>
+
+        <div class="skills-grid">
+          <article class="skill-group reveal">
+            <div class="skill-icon">FE</div>
+            <h3>前端开发</h3>
+            <div class="skill-tags">
+              <span class="skill-tag">HTML5</span>
+              <span class="skill-tag">CSS3</span>
+              <span class="skill-tag">JavaScript</span>
+              <span class="skill-tag">TypeScript</span>
+              <span class="skill-tag">Vue</span>
+              <span class="skill-tag">React</span>
+            </div>
+          </article>
+
+          <article class="skill-group reveal">
+            <div class="skill-icon">UI</div>
+            <h3>界面与体验</h3>
+            <div class="skill-tags">
+              <span class="skill-tag">响应式设计</span>
+              <span class="skill-tag">交互动效</span>
+              <span class="skill-tag">设计系统</span>
+              <span class="skill-tag">无障碍设计</span>
+              <span class="skill-tag">原型设计</span>
+            </div>
+          </article>
+
+          <article class="skill-group reveal">
+            <div class="skill-icon">DX</div>
+            <h3>工程与工具</h3>
+            <div class="skill-tags">
+              <span class="skill-tag">Git</span>
+              <span class="skill-tag">Vite</span>
+              <span class="skill-tag">Node.js</span>
+              <span class="skill-tag">REST API</span>
+              <span class="skill-tag">性能优化</span>
+              <span class="skill-tag">自动化部署</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 项目作品板块 ==================== -->
+    <section class="section" id="projects">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="section-label">Portfolio</span>
+          <h2 class="section-title">项目作品</h2>
+          <p class="section-description">
+            部分个人与商业项目展示，每个项目都承载着一次关于设计和技术的探索。
+          </p>
+        </div>
+
+        <div class="projects-grid">
+          <article class="project-card reveal">
+            <div class="project-cover cover-one">
+              <span class="project-symbol">01</span>
+            </div>
+            <div class="project-content">
+              <span class="project-category">企业级应用</span>
+              <h3>智能数据管理平台</h3>
+              <p>
+                面向企业用户的数据管理后台，提供可视化看板、权限管理与多维数据分析功能。
+              </p>
+              <div class="project-footer">
+                <span class="project-tech">Vue · TypeScript · ECharts</span>
+                <a class="project-link" href="#contact">了解更多 →</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="project-card reveal">
+            <div class="project-cover cover-two">
+              <span class="project-symbol">02</span>
+            </div>
+            <div class="project-content">
+              <span class="project-category">生活服务</span>
+              <h3>城市旅行指南</h3>
+              <p>
+                聚合景点、美食和旅行路线的响应式网站，帮助用户快速规划个性化行程。
+              </p>
+              <div class="project-footer">
+                <span class="project-tech">React · API · Responsive</span>
+                <a class="project-link" href="#contact">了解更多 →</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="project-card reveal">
+            <div class="project-cover cover-three">
+              <span class="project-symbol">03</span>
+            </div>
+            <div class="project-content">
+              <span class="project-category">效率工具</span>
+              <h3>轻量任务协作工具</h3>
+              <p>
+                简洁直观的团队任务管理产品，支持看板、标签、进度追踪与多人协作。
+              </p>
+              <div class="project-footer">
+                <span class="project-tech">JavaScript · CSS · LocalStorage</span>
+                <a class="project-link" href="#contact">了解更多 →</a>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 联系方式板块 ==================== -->
+    <section class="section contact-section" id="contact">
+      <div class="container">
+        <div class="contact-box reveal">
+          <div class="contact-content">
+            <h2>有一个好想法？<br>让我们一起实现它。</h2>
+            <p>
+              如果你正在寻找前端开发伙伴，或希望交流产品、设计与技术，
+              欢迎随时联系我。
+            </p>
+
+            <div class="contact-details">
+              <span>邮箱：hello@example.com</span>
+              <span>城市：中国 · 上海</span>
+            </div>
+          </div>
+
+          <div class="contact-actions">
+            <a
+              class="button contact-button"
+              href="mailto:hello@example.com"
+              aria-label="发送邮件"
+            >
+              发送邮件 →
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ==================== 页脚 ==================== -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <p>
+        © <span id="currentYear"></span> 林默. 保留所有权利。
+      </p>
+      <a class="back-to-top" href="#home">返回顶部 ↑</a>
+    </div>
+  </footer>
+
+  <script>
+    /* ==================== 手机导航菜单 ==================== */
+    const menuButton = document.getElementById("menuButton");
+    const navLinks = document.getElementById("navLinks");
+    const navItems = navLinks.querySelectorAll("a");
+
+    // 切换手机端菜单显示状态
+    function toggleMenu() {
+      const isOpen = navLinks.classList.toggle("open");
+
+      menuButton.classList.toggle("open", isOpen);
+      menuButton.setAttribute("aria-expanded", String(isOpen));
+      menuButton.setAttribute(
+        "aria-label",
+        isOpen ? "关闭导航菜单" : "打开导航菜单"
+      );
+
+      document.body.classList.toggle("menu-open", isOpen);
+    }
+
+    // 关闭手机端菜单
+    function closeMenu() {
+      navLinks.classList.remove("open");
+      menuButton.classList.remove("open");
+      menuButton.setAttribute("aria-expanded", "false");
+      menuButton.setAttribute("aria-label", "打开导航菜单");
+      document.body.classList.remove("menu-open");
+    }
+
+    menuButton.addEventListener("click", toggleMenu);
+
+    navItems.forEach((item) => {
+      item.addEventListener("click", closeMenu);
+    });
+
+    // 屏幕变宽后自动恢复桌面导航状态
+    window.addEventListener("resize", () => {
+      if (window.innerWidth > 680) {
+        closeMenu();
+      }
+    });
+
+    /* ==================== 导航高亮效果 ==================== */
+    const sections = document.querySelectorAll("main section[id]");
+
+    const navigationObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+
+          navItems.forEach((item) => {
+            const targetId = item.getAttribute("href").slice(1);
+            item.classList.toggle("active", targetId === entry.target.id);
+          });
+        });
+      },
+      {
+        // 观察页面中部区域，自动判断当前板块
+        rootMargin: "-35% 0px -55% 0px",
+        threshold: 0
+      }
+    );
+
+    sections.forEach((section) => navigationObserver.observe(section));
+
+    /* ==================== 元素进入视口动画 ==================== */
+    const revealElements = document.querySelectorAll(".reveal");
+
+    // 若用户没有开启减少动态效果，则启用滚动显示动画
+    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      const revealObserver = new IntersectionObserver(
+        (entries, observer) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+
+            entry.target.classList.add("visible");
+            observer.unobserve(entry.target);
+          });
+        },
+        {
+          threshold: 0.12
+        }
+      );
+
+      revealElements.forEach((element) => revealObserver.observe(element));
+    } else {
+      revealElements.forEach((element) => {
+        element.classList.add("visible");
+      });
+    }
+
+    /* ==================== 自动更新版权年份 ==================== */
+    document.getElementById("currentYear").textContent =
+      new Date().getFullYear();
+  </script>
+</body>
+</html>
